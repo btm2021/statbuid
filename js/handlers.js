@@ -176,7 +176,15 @@ function handleMouseUp(e) {
         if (target.classList.contains('connector-dot') && target.dataset.connectorType === 'input') {
             const toBlockId = target.dataset.blockId;
             if (drawingLine.from !== toBlockId) {
-                actions.createConnection(drawingLine.from, toBlockId);
+                const typeInput = prompt("Enter connection type (e.g., 'if', 'else', 'wait', 'when') or leave blank for default:");
+                let type = 'default';
+                if (typeInput) {
+                    const lowerType = typeInput.toLowerCase();
+                    if (['if', 'else', 'wait', 'when'].includes(lowerType)) {
+                        type = lowerType;
+                    }
+                }
+                actions.createConnection(drawingLine.from, toBlockId, type);
             }
         }
         updateState('drawingLine', null);

@@ -208,6 +208,7 @@ input[type="text"]:focus {
     height: 100%;
     transform-origin: 0 0;
     z-index: 2;
+    pointer-events: none; /* Allow clicks to pass through to SVG layer */
 }
 
 .block {
@@ -223,6 +224,7 @@ input[type="text"]:focus {
     align-items: center;
     justify-content: center;
     min-width: 100px;
+    pointer-events: auto; /* Re-enable pointer events for blocks */
 }
 
 .block.selected {
@@ -284,6 +286,59 @@ input[type="text"]:focus {
 
 .connection-path.selected + .connection-arrow {
     fill: var(--accent-color);
+}
+
+/* --- Conditional Connection Colors --- */
+.connection-path.if {
+    stroke: #28a745; /* Green */
+}
+.connection-path.if + .connection-arrow {
+    fill: #28a745;
+}
+.connection-path.if.selected {
+    stroke: #218838;
+}
+.connection-path.if.selected + .connection-arrow {
+    fill: #218838;
+}
+
+.connection-path.else {
+    stroke: #dc3545; /* Red */
+}
+.connection-path.else + .connection-arrow {
+    fill: #dc3545;
+}
+.connection-path.else.selected {
+    stroke: #c82333;
+}
+.connection-path.else.selected + .connection-arrow {
+    fill: #c82333;
+}
+
+.connection-path.wait {
+    stroke: #007bff; /* Blue */
+}
+.connection-path.wait + .connection-arrow {
+    fill: #007bff;
+}
+.connection-path.wait.selected {
+    stroke: #0056b3;
+}
+.connection-path.wait.selected + .connection-arrow {
+    fill: #0056b3;
+}
+
+.connection-path.when {
+    stroke: #6f42c1; /* Purple */
+}
+.connection-path.when + .connection-arrow {
+    fill: #6f42c1;
+}
+.connection-path.when.selected {
+    stroke: #5a32a3;
+}
+.connection-path.when.selected + .connection-arrow {
+    fill: #5a32a3;
 }
 
 .connection-label-badge {

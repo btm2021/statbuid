@@ -9,7 +9,7 @@ const LOCAL_STORAGE_KEY = 'strategyBuilderState';
 const defaultState = {
     blocks: [],
     connections: [],
-    availableBlocks: ['RSI', 'EMA', 'MACD', 'Price'],
+    availableBlocks: ['VSR', 'CLOSE', 'HMA', 'Baseline','VSR HTF','HMA HTF','BOT','BOT HTF','LONG','SHORT','DCA','TP','SL','NOTHING','WAIT'],
     view: {
         panX: 0,
         panY: 0,

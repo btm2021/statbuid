@@ -95,6 +95,11 @@ function renderConnections(connections, blocks, selectedItem) {
         path.setAttribute('d', pathD);
         path.setAttribute('class', 'connection-path');
         
+        // Add class for connection type
+        if (conn.type && conn.type !== 'default') {
+            path.classList.add(conn.type);
+        }
+
         const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
         arrow.setAttribute('points', arrowPoints);
         arrow.setAttribute('class', 'connection-arrow');

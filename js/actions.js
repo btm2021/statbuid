@@ -51,8 +51,9 @@ export function updateBlockPosition(id, x, y, shouldSnap = false) {
  * Creates a connection between two blocks.
  * @param {string} fromId - The ID of the source block.
  * @param {string} toId - The ID of the target block.
+ * @param {'if' | 'else' | 'default'} type - The type of connection.
  */
-export function createConnection(fromId, toId) {
+export function createConnection(fromId, toId, type = 'default') {
     const state = getState();
     // Prevent duplicate connections
     const exists = state.connections.some(c => c.from === fromId && c.to === toId);
@@ -62,12 +63,13 @@ export function createConnection(fromId, toId) {
         id: generateId(),
         from: fromId,
         to: toId,
-        label: ''
+        type: type,
+        label: type !== 'default' ? type.toUpperCase() : ''
     };
     state.connections.push(newConnection);
     const fromName = state.blocks.find(b => b.id === fromId).name;
     const toName = state.blocks.find(b => b.id === toId).name;
-    dom.logToConsole(`Connected '${fromName}' to '${toName}'.`);
+    dom.logToConsole(`Connected '${fromName}' to '${toName}' (${type}).`);
 }
 
 /**
