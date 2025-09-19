@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategy Builder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>BLOCKS</h2>
+            </div>
+            <div class="sidebar-content">
+                <form id="add-block-form" class="add-block-form">
+                    <input type="text" id="new-block-name" placeholder="New Block Name" required>
+                    <button type="submit">Add Block</button>
+                </form>
+                <div id="blocks-list" class="blocks-list">
+                    <!-- Draggable blocks will be populated by JS -->
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <button id="save-button">Save</button>
+                <button id="clear-button">Clear</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <canvas id="grid-canvas"></canvas>
+            <svg id="connections-svg" class="connections-svg"></svg>
+            <div id="canvas-blocks" class="canvas-blocks">
+                <!-- Blocks on canvas will be rendered here -->
+            </div>
+        </main>
+
+        <!-- Bottom Panel -->
+        <footer class="bottom-panel" id="bottom-panel">
+            <div class="panel-resizer" id="panel-resizer"></div>
+            <div class="panel-tabs">
+                <button class="tab-button active" data-tab="console">CONSOLE</button>
+                <button class="tab-button" data-tab="properties">PROPERTIES</button>
+            </div>
+            <div class="panel-content">
+                <div id="console-content" class="tab-content active">
+                    <!-- Log messages will be appended here -->
+                </div>
+                <div id="properties-content" class="tab-content">
+                    Select an item to see its properties.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
