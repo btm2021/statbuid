@@ -1,38 +1,26 @@
-// --- DOM Element References ---
+/* Query and cache DOM nodes used across the app */
+import ctx from './state.js';
 
-// Main containers
-export const appContainer = document.querySelector('.app-container');
-export const sidebar = document.querySelector('.sidebar');
-export const mainContent = document.querySelector('.main-content');
-export const bottomPanel = document.getElementById('bottom-panel');
+export function cacheDom() {
+    ctx.dom.canvas = document.getElementById('canvas');
+    ctx.dom.canvasContent = document.getElementById('canvasContent');
+    ctx.dom.toolbox = document.querySelector('.toolbox');
+    ctx.dom.autoArrangeButton = document.getElementById('autoArrange');
+    ctx.dom.tabButtons = Array.from(document.querySelectorAll('.tab-button'));
+    ctx.dom.tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+    ctx.dom.gridZoomInBtn = document.getElementById('gridZoomIn');
+    ctx.dom.gridZoomOutBtn = document.getElementById('gridZoomOut');
+    ctx.dom.gridScaleLabel = document.getElementById('gridScaleLabel');
+    ctx.dom.analysisTotalNodes = document.getElementById('analysisTotalNodes');
+    ctx.dom.analysisStartNodes = document.getElementById('analysisStartNodes');
+    ctx.dom.analysisTotalConnections = document.getElementById('analysisTotalConnections');
+    ctx.dom.svg = d3.select('#connection-layer');
+    const existingDefs = ctx.dom.svg.select('defs');
+    ctx.dom.defs = existingDefs.empty() ? ctx.dom.svg.append('defs') : existingDefs;
+}
 
-// Sidebar
-export const addBlockForm = document.getElementById('add-block-form');
-export const newBlockNameInput = document.getElementById('new-block-name');
-export const blocksList = document.getElementById('blocks-list');
-export const saveButton = document.getElementById('save-button');
-export const clearButton = document.getElementById('clear-button');
-
-// Canvas
-export const gridCanvas = document.getElementById('grid-canvas');
-export const connectionsSvg = document.getElementById('connections-svg');
-export const canvasBlocksContainer = document.getElementById('canvas-blocks');
-
-// Bottom Panel
-export const panelResizer = document.getElementById('panel-resizer');
-export const panelTabs = document.querySelector('.panel-tabs');
-export const consoleContent = document.getElementById('console-content');
-export const propertiesContent = document.getElementById('properties-content');
-
-/**
- * Appends a new log message to the console panel.
- * @param {string} message - The message to log.
- */
-export function logToConsole(message) {
-    const logEntry = document.createElement('div');
-    const timestamp = new Date().toLocaleTimeString();
-    logEntry.textContent = `[${timestamp}] ${message}`;
-    consoleContent.appendChild(logEntry);
-    // Auto-scroll to the bottom
-    consoleContent.scrollTop = consoleContent.scrollHeight;
+export function ensureDomReady() {
+    if (!ctx.dom.canvas) {
+        throw new Error('Canvas element is missing from the DOM');
+    }
 }

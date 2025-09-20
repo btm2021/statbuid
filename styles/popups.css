@@ -1,0 +1,71 @@
+/* Floating editor popups */
+.floating-popup {
+    min-width: 180px;
+    max-width: 220px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.78rem;
+}
+
+.floating-popup h4 {
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.popup-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.popup-field .color-swatches {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.popup-field .color-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+}
+
+.popup-field .color-swatch.selected::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 2px solid #2563eb;
+}
+
+.popup-field select,
+.popup-field textarea,
+.popup-field input[type="text"] {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px;
+    font-family: inherit;
+    font-size: 0.75rem;
+}
+
+.popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.popup-actions button {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}

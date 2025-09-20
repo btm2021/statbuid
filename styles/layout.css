@@ -1,0 +1,83 @@
+/* Top navigation and page layout */
+.app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.top-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 0.82rem;
+}
+
+.branding {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-mark {
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.branding h1 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.branding p {
+    margin: 0;
+    font-size: 0.7rem;
+    color: var(--muted);
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.grid-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 6px;
+    background: var(--bg);
+}
+
+.grid-controls button {
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.7rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+.grid-controls span {
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.layout {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    background: var(--bg);
+}

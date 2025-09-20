@@ -1,0 +1,26 @@
+/* Base variables and global resets */
+:root {
+    --border: #d0d5dd;
+    --text: #0f172a;
+    --muted: #667085;
+    --grid-size: 32px;
+    --grid-color: #e4e7ec;
+    --bg: #ffffff;
+    --connector-input: #ef4444;
+    --connector-output: #10b981;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+}
