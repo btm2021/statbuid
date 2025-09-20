@@ -1,0 +1,76 @@
+.node-group {
+    cursor: move;
+}
+
+.node-shape {
+    fill: white;
+    stroke: #333;
+    stroke-width: 2;
+}
+
+.node-shape:hover {
+    stroke: #666;
+}
+
+.node-shape.selected {
+    stroke: #000;
+    stroke-width: 3;
+}
+
+.node-text {
+    font-size: 10px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+    user-select: none;
+}
+
+.node-comment {
+    font-size: 9px;
+    fill: #666;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+    font-style: italic;
+}
+
+.comment-background {
+    fill: rgba(255, 255, 255, 0.9);
+    stroke: #ddd;
+    stroke-width: 1;
+    rx: 3;
+    ry: 3;
+}
+
+.connection-point {
+    fill: #666;
+    stroke: white;
+    stroke-width: 1;
+    cursor: crosshair;
+}
+
+.connection-point:hover {
+    fill: #333;
+    r: 6;
+}
+
+.input-point {
+    fill: #4CAF50;
+}
+
+.output-point {
+    fill: #2196F3;
+}
+
+.node-rectangle {
+    rx: 3;
+    ry: 3;
+}
+
+.node-diamond {
+    transform-origin: center;
+}
+
+.node-circle {
+    /* Circle specific styles */
+}

@@ -1,0 +1,41 @@
+.canvas-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: white;
+}
+
+.canvas {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+}
+
+.canvas:active {
+    cursor: grabbing;
+}
+
+.grid-pattern {
+    fill: none;
+    stroke: #f0f0f0;
+    stroke-width: 1;
+}
+
+.connection-line {
+    fill: none;
+    stroke: #666;
+    stroke-width: 2;
+    marker-end: url(#arrowhead);
+}
+
+.connection-line:hover {
+    stroke: #333;
+    stroke-width: 3;
+}
+
+.temp-connection {
+    fill: none;
+    stroke: #999;
+    stroke-width: 2;
+    stroke-dasharray: 5,5;
+}

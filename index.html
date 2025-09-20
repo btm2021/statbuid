@@ -1,171 +1,85 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Decision Flow Builder</title>
-    <link rel="stylesheet" href="styles/base.css" />
-    <link rel="stylesheet" href="styles/layout.css" />
-    <link rel="stylesheet" href="styles/toolbox.css" />
-    <link rel="stylesheet" href="styles/workspace.css" />
-    <link rel="stylesheet" href="styles/panels.css" />
-    <link rel="stylesheet" href="styles/popups.css" />
-    <link rel="stylesheet" href="styles/responsive.css" />
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script type="module" defer src="js/main.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Strategy Visualization</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/sidebar.css">
+    <link rel="stylesheet" href="styles/canvas.css">
+    <link rel="stylesheet" href="styles/nodes.css">
 </head>
+
 <body>
-    <div class="app">
-        <header class="top-nav">
-            <div class="branding">
-                <span class="brand-mark">DF</span>
-                <div>
-                    <h1>Decision Flow Builder</h1>
-                    <p>Xây d?ng &amp; tr?c quan hóa chi?n lu?c</p>
+    <nav class="navbar">
+        <span>Trading Strategy Builder</span>
+    </nav>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="catalog">
+                <div class="catalog-section">
+                    <div class="catalog-title">Signal</div>
+                    <div class="block-item" data-type="cross" data-category="signal">Cross</div>
+                    <div class="block-item" data-type="start" data-category="signal">Threshold</div>
+                    <div class="block-item" data-type="trend" data-category="signal">Pattern</div>
+                    <div class="block-item" data-type="moment" data-category="signal">State Change</div>
+                </div>
+
+                <div class="catalog-section">
+                    <div class="catalog-title">Indicator</div>
+                    <div class="block-item" data-type="ema" data-category="indicator">EMA</div>
+                    <div class="block-item" data-type="vsr" data-category="indicator">VSR</div>
+                    <div class="block-item" data-type="vsr_htf" data-category="indicator">VSR HTF</div>
+                    <div class="block-item" data-type="vsr" data-category="indicator">HMA</div>
+                    <div class="block-item" data-type="vsr_htf" data-category="indicator">HMA HTF</div>
+                    <div class="block-item" data-type="vsr" data-category="indicator">Bot</div>
+                    <div class="block-item" data-type="vsr_htf" data-category="indicator">Bot HTF</div>
+                    <div class="block-item" data-type="rsi" data-category="indicator">RSI</div>
+<div class="block-item" data-type="rsi" data-category="indicator">Retest</div>
+                </div>
+
+                <div class="catalog-section">
+                    <div class="catalog-title">Action</div>
+                    <div class="block-item" data-type="wait" data-category="action">Wait</div>
+                    <div class="block-item" data-type="long" data-category="action">Long</div>
+                    <div class="block-item" data-type="short" data-category="action">Short</div>
+                    <div class="block-item" data-type="nothing" data-category="action">Nothing</div>
+                    <div class="block-item" data-type="newstat" data-category="action">New Strategy</div>
+
                 </div>
             </div>
-            <div class="nav-actions">
-                <div class="grid-controls">
-                    <button id="gridZoomOut" title="Thu nh? lu?i">-</button>
-                    <span id="gridScaleLabel">100%</span>
-                    <button id="gridZoomIn" title="Phóng to lu?i">+</button>
-                </div>
-            </div>
-        </header>
-        <div class="layout">
-            <aside class="sidebar">
-                <section class="toolbox">
-                    <h2>Thu vi?n kh?i</h2>
-                    <details class="tool-tree" open>
-                        <summary>Signal</summary>
-                        <ul>
-                            <li>
-                                <details open>
-                                    <summary>Crossovers</summary>
-                                    <div class="tool-items">
-                                        <div class="tool-item" draggable="true" data-type="Golden Cross">Golden Cross</div>
-                                        <div class="tool-item" draggable="true" data-type="Death Cross">Death Cross</div>
-                                    </div>
-                                </details>
-                            </li>
-                            <li>
-                                <details open>
-                                    <summary>Thresholds</summary>
-                                    <div class="tool-items">
-                                        <div class="tool-item" draggable="true" data-type="Overbought">Overbought</div>
-                                        <div class="tool-item" draggable="true" data-type="Oversold">Oversold</div>
-                                    </div>
-                                </details>
-                            </li>
-                            <li>
-                                <details>
-                                    <summary>Blocks / Zones</summary>
-                                    <div class="tool-items">
-                                        <div class="tool-item" draggable="true" data-type="Supply Zone">Supply Zone</div>
-                                        <div class="tool-item" draggable="true" data-type="Demand Zone">Demand Zone</div>
-                                    </div>
-                                </details>
-                            </li>
-                            <li>
-                                <details>
-                                    <summary>Volatility</summary>
-                                    <div class="tool-items">
-                                        <div class="tool-item" draggable="true" data-type="ATR">ATR Spike</div>
-                                        <div class="tool-item" draggable="true" data-type="Bollinger">Bollinger Expansion</div>
-                                    </div>
-                                </details>
-                            </li>
-                            <li>
-                                <details>
-                                    <summary>Momentum</summary>
-                                    <div class="tool-items">
-                                        <div class="tool-item" draggable="true" data-type="RSI Breakout">RSI Breakout</div>
-                                        <div class="tool-item" draggable="true" data-type="MACD Surge">MACD Surge</div>
-                                    </div>
-                                </details>
-                            </li>
-                            <li>
-                                <details>
-                                    <summary>Trend</summary>
-                                    <div class="tool-items">
-                                        <div class="tool-item" draggable="true" data-type="Higher High">Higher High</div>
-                                        <div class="tool-item" draggable="true" data-type="Lower Low">Lower Low</div>
-                                    </div>
-                                </details>
-                            </li>
-                            <li>
-                                <details>
-                                    <summary>Volume</summary>
-                                    <div class="tool-items">
-                                        <div class="tool-item" draggable="true" data-type="Volume Spike">Volume Spike</div>
-                                        <div class="tool-item" draggable="true" data-type="Dry Up">Dry Up</div>
-                                    </div>
-                                </details>
-                            </li>
-                            <li>
-                                <details>
-                                    <summary>Pattern-based</summary>
-                                    <div class="tool-items">
-                                        <div class="tool-item" draggable="true" data-type="Inside Bar">Inside Bar</div>
-                                        <div class="tool-item" draggable="true" data-type="Engulfing">Engulfing</div>
-                                    </div>
-                                </details>
-                            </li>
-                            <li>
-                                <details>
-                                    <summary>Divergence</summary>
-                                    <div class="tool-items">
-                                        <div class="tool-item" draggable="true" data-type="Bullish Divergence">Bullish Divergence</div>
-                                        <div class="tool-item" draggable="true" data-type="Bearish Divergence">Bearish Divergence</div>
-                                    </div>
-                                </details>
-                            </li>
-                        </ul>
-                    </details>
-                    <details class="tool-tree" open>
-                        <summary>Indicator</summary>
-                        <div class="tool-items indicator-group">
-                            <div class="tool-item" draggable="true" data-type="VSR">VSR</div>
-                            <div class="tool-item" draggable="true" data-type="VSR HTF">VSR HTF</div>
-                            <div class="tool-item" draggable="true" data-type="HMA">HMA</div>
-                            <div class="tool-item" draggable="true" data-type="HMA HTF">HMA HTF</div>
-                            <div class="tool-item" draggable="true" data-type="Bot">Bot</div>
-                            <div class="tool-item" draggable="true" data-type="Bot HTF">Bot HTF</div>
-                            <div class="tool-item" draggable="true" data-type="RSI">RSI</div>
-                            <div class="tool-item" draggable="true" data-type="EMA">EMA</div>
-                        </div>
-                    </details>
-                </section>
-            </aside>
-            <main class="workspace-area">
-                <section class="canvas-container">
-                    <div id="canvas" class="canvas" tabindex="0">
-                        <div id="canvasContent" class="canvas-content">
-                            <svg id="connection-layer"></svg>
-                        </div>
-                    </div>
-                </section>
-                <footer class="dock">
-                    <div class="tab-bar">
-                        <button class="tab-button active" data-tab="utilities">Ti?n ích</button>
-                        <button class="tab-button" data-tab="analysis">Phân tích</button>
-                    </div>
-                    <div class="tab-panels">
-                        <div class="tab-panel active" id="tab-utilities">
-                            <button id="autoArrange" class="auto-arrange">Auto-Arrange</button>
-                        </div>
-                        <div class="tab-panel" id="tab-analysis">
-                            <ul class="analysis-list">
-                                <li><span class="label">S? nút t?ng:</span> <span id="analysisTotalNodes">0</span></li>
-                                <li><span class="label">S? nút b?t d?u:</span> <span id="analysisStartNodes">0</span></li>
-                                <li><span class="label">S? k?t n?i:</span> <span id="analysisTotalConnections">0</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </footer>
-            </main>
+        </div>
+
+        <div class="canvas-container">
+            <svg id="canvas" class="canvas"></svg>
         </div>
     </div>
-</body>
-</html>
 
+    <footer class="footer">
+        <span>Strategy Visualization Tool</span>
+    </footer>
+
+    <div id="contextMenu" class="context-menu">
+        <div class="menu-item" data-shape="rectangle">Rectangle</div>
+        <div class="menu-item" data-shape="diamond">Diamond</div>
+        <div class="menu-item" data-shape="circle">Circle</div>
+        <div class="menu-separator"></div>
+        <div class="menu-item" data-action="background">Background Color</div>
+        <div class="menu-item" data-action="textcolor">Text Color</div>
+        <div class="menu-item" data-action="comment">Add Comment</div>
+        <div class="menu-separator"></div>
+        <div class="menu-item" data-action="delete">Delete</div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/nodes.js"></script>
+    <script src="js/connections.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/context-menu.js"></script>
+</body>
+
+</html>
