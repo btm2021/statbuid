@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weighted Log-Odds Stacking Prototype</title>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: monospace;
+            font-size: 12px;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        .panel {
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        #left-panel {
+            flex: 0 0 350px;
+            border-right: 1px solid black;
+        }
+        #right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        #flowchart-container {
+            border-bottom: 1px solid black;
+            flex-grow: 1;
+            padding: 0; /* Remove padding for svg-pan-zoom */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Grid background */
+            background-color: #fff;
+            background-image: linear-gradient(rgba(0,0,0,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        #flowchart-container svg {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        #results-details {
+            border-top: 1px solid black;
+        }
+        #results-details summary {
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #results-container {
+            max-height: 250px;
+            padding: 0 10px 10px 10px;
+            overflow-y: auto;
+        }
+        input, button {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 5px;
+        }
+        fieldset {
+            margin-bottom: 15px;
+            border: 1px solid black;
+        }
+        #indicator-list {
+            border: 1px solid black;
+            padding: 5px;
+            min-height: 100px;
+            margin-bottom: 10px;
+        }
+        #indicator-list > div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 0;
+        }
+        .delete-btn {
+            width: auto;
+            margin-left: 10px;
+            padding: 0 5px;
+            font-size: 10px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="left-panel" class="panel">
+            <h3>Indicators</h3>
+            <fieldset>
+                <legend>Add Indicator</legend>
+                <form id="add-indicator-form">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    
+                    <label for="probability">Probability (0-1):</label>
+                    <input type="text" id="probability" name="probability" inputmode="decimal" required>
+                    
+                    <label for="weight">Weight:</label>
+                    <input type="text" id="weight" name="weight" inputmode="decimal" required>
+                    
+                    <button type="submit">Add Indicator</button>
+                </form>
+            </fieldset>
+
+            <label>Indicator List:</label>
+            <div id="indicator-list"></div>
+
+            <fieldset>
+                <legend>Calculation</legend>
+                <label for="threshold">ENTRY Threshold (P):</label>
+                <input type="number" id="threshold" name="threshold" value="0.75" step="0.05">
+            </fieldset>
+        </div>
+        <div id="right-panel" class="panel">
+            <div id="flowchart-container"></div>
+            <details id="results-details">
+                <summary>Chi Tiết Tính Toán</summary>
+                <div id="results-container">
+                    <pre>Results will be shown here...</pre>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom/dist/svg-pan-zoom.min.js"></script>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'neutral',
+            fontFamily: 'monospace'
+        });
+
+        const addIndicatorForm = document.getElementById('add-indicator-form');
+        const indicatorListDiv = document.getElementById('indicator-list');
+        const resultsContainer = document.getElementById('results-container');
+        const flowchartContainer = document.getElementById('flowchart-container');
+        const thresholdInput = document.getElementById('threshold');
+
+        let indicators = JSON.parse(localStorage.getItem('indicators')) || [];
+        let panZoomInstance = null;
+
+        function saveIndicators() {
+            localStorage.setItem('indicators', JSON.stringify(indicators));
+        }
+
+        addIndicatorForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = e.target.name.value;
+            const p_str = e.target.probability.value.replace(',', '.');
+            const w_str = e.target.weight.value.replace(',', '.');
+            
+            const p = parseFloat(p_str);
+            const w = parseFloat(w_str);
+
+            if (!name) { alert('Lỗi: Vui lòng nhập tên cho indicator.'); return; }
+            if (isNaN(p) || p <= 0 || p >= 1) { alert('Lỗi: "Probability" phải là một số lớn hơn 0 và nhỏ hơn 1.'); return; }
+            if (isNaN(w)) { alert('Lỗi: "Weight" phải là một số.'); return; }
+
+            indicators.push({ name, p, w });
+            saveIndicators();
+            updateIndicatorList();
+            calculateAndDraw(); // Auto-calculate
+            e.target.reset();
+            e.target.name.focus();
+        });
+
+        function updateIndicatorList() {
+            indicatorListDiv.innerHTML = indicators.map((ind, i) => 
+                `<div>
+                    <span>${i + 1}. ${ind.name} (p=${ind.p}, w=${ind.w})</span>
+                    <button class="delete-btn" data-index="${i}">Xóa</button>
+                </div>`
+            ).join('');
+        }
+
+        indicatorListDiv.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-btn')) {
+                const index = parseInt(e.target.dataset.index, 10);
+                indicators.splice(index, 1);
+                saveIndicators();
+                updateIndicatorList();
+                calculateAndDraw(); // Auto-calculate
+            }
+        });
+
+        thresholdInput.addEventListener('input', () => {
+            if (indicators.length > 0) {
+                calculateAndDraw(); // Auto-calculate
+            }
+        });
+
+        function calculateAndDraw() {
+            if (indicators.length === 0) {
+                resultsContainer.innerHTML = '<pre>Thêm một chỉ báo để bắt đầu.</pre>';
+                if(panZoomInstance) panZoomInstance.destroy();
+                flowchartContainer.innerHTML = '';
+                return;
+            }
+
+            let totalZ = 0;
+            let resultsText = 'Chi Tiết Tính Toán (Giải thích đơn giản):\n';
+            resultsText += '--------------------------------------------\n';
+            resultsText += 'Tưởng tượng mỗi "chỉ báo" là một người bạn cho lời khuyên.\n';
+            resultsText += '- p (Tự tin): Mức độ chắc chắn của lời khuyên (0-1).\n';
+            resultsText += '- w (Tin tưởng): Mức độ bạn tin vào người bạn này.\n';
+            resultsText += '- logit (Điểm): Điểm số gốc của lời khuyên, tính từ mức độ tự tin.\n';
+            resultsText += '- Đóng góp: Điểm số sau khi đã nhân với mức độ tin tưởng của bạn.\n\n';
+
+            indicators.forEach(ind => {
+                const p = ind.p;
+                const w = ind.w;
+                const logit = Math.log(p / (1 - p));
+                ind.logit = logit;
+                const contribution = w * logit;
+                totalZ += contribution;
+                resultsText += `${ind.name.padEnd(15)} | Tự tin(p)=${p.toFixed(3)}, Tin tưởng(w)=${w.toFixed(2)}, Điểm=${logit.toFixed(3)}, Đóng góp=${contribution.toFixed(3)}\n`;
+            });
+
+            const finalP = 1 / (1 + Math.exp(-totalZ));
+            const threshold = parseFloat(thresholdInput.value);
+            const finalDecision = finalP >= threshold ? 'HÀNH ĐỘNG' : 'KHÔNG LÀM GÌ';
+
+            resultsText += '--------------------------------------------\n';
+            resultsText += `Tổng điểm (z) từ các lời khuyên: ${totalZ.toFixed(4)}\n`;
+            resultsText += `Xác suất tổng hợp cuối cùng (P) : ${finalP.toFixed(4)}\n`;
+            resultsText += `Ngưỡng quyết định              : ${threshold.toFixed(4)}\n`;
+            resultsText += `\n==> KẾT QUẢ CUỐI CÙNG: ${finalDecision}`;
+
+            resultsContainer.innerHTML = `<pre>${resultsText}</pre>`;
+            
+            drawMermaidChart(finalDecision, threshold, indicators);
+        }
+
+        async function drawMermaidChart(finalDecision, threshold, indicatorsWithLogits) {
+            if (panZoomInstance) {
+                panZoomInstance.destroy();
+                panZoomInstance = null;
+            }
+            flowchartContainer.innerHTML = '';
+
+            let graphDefinition = 'graph LR\n';
+            graphDefinition += 'A[Bắt đầu] --> B{Các chỉ báo}\n';
+
+            if (indicatorsWithLogits.length > 0) {
+                 indicatorsWithLogits.forEach((ind, i) => {
+                    const nodeId = `C${i}`;
+                    graphDefinition += `B --> ${nodeId}[${ind.name}<br/>p=${ind.p}, w=${ind.w}<br/>logit=${ind.logit.toFixed(2)}]
+`;
+                    graphDefinition += `${nodeId} --> D{Tổng hợp điểm}\n`;
+                });
+            } else {
+                graphDefinition += 'B --> D{Tổng hợp điểm}\n';
+            }
+            
+            graphDefinition += `D --> E{P >= ${threshold} ?}\n`;
+            graphDefinition += 'E -- Có --> F[HÀNH ĐỘNG]\n';
+            graphDefinition += 'E -- Không --> G[KHÔNG LÀM GÌ]\n';
+
+            if (finalDecision === 'HÀNH ĐỘNG') {
+                graphDefinition += 'style F fill:#AFA,stroke:#333,stroke-width:2px\n';
+            } else {
+                graphDefinition += 'style G fill:#FAA,stroke:#333,stroke-width:2px\n';
+            }
+            
+            try {
+                const { svg } = await mermaid.render('mermaid-graph', graphDefinition);
+                flowchartContainer.innerHTML = svg;
+                const svgElement = flowchartContainer.querySelector('svg');
+                if (svgElement) {
+                    svgElement.style.width = '100%';
+                    svgElement.style.height = '100%';
+                    panZoomInstance = svgPanZoom(svgElement, {
+                        zoomEnabled: true,
+                        controlIconsEnabled: true,
+                        fit: true,
+                        center: true,
+                        minZoom: 0.5,
+                        maxZoom: 5
+                    });
+                }
+            } catch (e) {
+                console.error("Mermaid rendering error:", e);
+                flowchartContainer.innerHTML = '<pre>Lỗi khi vẽ sơ đồ.</pre>';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            updateIndicatorList();
+            calculateAndDraw();
+        });
+
+    </script>
+
+</body>
+</html>
